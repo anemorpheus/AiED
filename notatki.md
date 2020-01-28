@@ -305,5 +305,43 @@ Oznaczenia:
 - $C_k$ - klastry
 - $G$ - aktualna liczba klastrów
 - $D_{KL}$ - odległość między klastrami $C_K$ i $C_L$  
-Hierachiczne algorytmy grupowania wymagają przyjęcia pewnej `linkage function` ($D_{KL}$), a wyniki zależą od przyjętej definicji.
+Hierachiczne algorytmy grupowania wymagają przyjęcia pewnej `linkage function` ($D_{KL}$), a wyniki zależą od przyjętej definicji.  
+Algorytmy hierarchiczne są deterministyczne (zawsze dają to same wyjście).
+
+Algorytm (wer. aglomeratywna):
+1. $C_k = {x_k}, k = 1..n, G = n$ (kademu klastrowi przyporządkuj jeden punkt)
+2. Znajdź $K$, $L$ takie, że $D_{KL} = min D_{IJ}, 1 <= I, J <= G$ (znajdź takie klastry, które są do siebie podobne)
+3. Zastąp $C_K$ i $C_L$ przez klaster $C_K \cup C_L$, $G = G - 1$ ()
+4. Powtarzaj kroki 2, 3 dopóki G > 1
+
+Wszystkie `linkage function` mają wspólne dla siebie to, że:
+- wybierane są te zbiory, dla których `linkage function` jest minimalne,
+- wszystkie `linkage function` wybierają zbiory sąsiadujące
+
+Typy `linkage function`:
+- `average linkage`
+  - suma kwadratu odległości środków i wariancji podzielonych przez liczności poszczególnych zbiorów
+  - łączy klastry o małej wariancji
+  - w wyniku klastry o podobnej wariancji
+- `centroid linkage`
+  - minimalna odległość środków
+- `complete linkage`
+  - maksymalny dystans pomiędzy dwoma klastrami
+  - w wyniku klastry o podobnej średnicy
+- `simple linkage`
+  - minimalny dystans pomiędzy dwoma klastrami
+  - w wyniku klastry wydłużone, nieregularne
+- `ward's minimum variance method`
+  - stosunek kwadratu odległości środków od sumy odwrotnych liczności zbiorów
+  - w wyniku klastry z grubsza równoliczne
+- `density linkage`
+  - klastry nieregularne, wydłużone
+
+Przed analizą skupień warto wykonać `standaryzację` (rodzaj normalizacji zmiennej losowej, w wyniku której zmienna uzyskuje średnią oczekiwaną zero i odchylenie standardowe jeden). Często jest to konieczne, ponieważ zmienne z duża wariancją mogą najbardziej wpływać na wynik grupowania.  
+Najczęstszym stosowanym przekształceniem jest standaryzacja `z`:
+$$
+z_{ij} = \frac{x_{ij} - \mu_j}{s_j}
+$$
+$x_{ij} - oryginalna wartość zmiennej $j$ dla obserwacji $i$,  
+$\mu_j, s_j$ - wartość średnia i odchylenie standardowe zmiennej $j$
 
