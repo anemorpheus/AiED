@@ -345,3 +345,47 @@ $$
 $x_{ij} - oryginalna wartość zmiennej $j$ dla obserwacji $i$,  
 $\mu_j, s_j$ - wartość średnia i odchylenie standardowe zmiennej $j$
 
+### VQ
+
+`Kohonen VQ` (`VQ` - `Vector Quantization`) - podobny do k-means, ale wybór nowych środków zależy od malejącej stałej uczenia, przesuwa się w kierunku grupowanych obserwacji. Stała uczenia $L$ maleje, ponieważ gdyby nie malała, algorytm nie byłby zbieżny.
+1. Wybierz k punktów
+2. Dla obserwacji $X_i$ znajdź najbliższy centroid $S_n$ (`winning seed`)
+3. Zmodyfikuj $S_n$ wg formuły:
+$$
+S_n = S_n(1 - L) + x_iL
+$$
+4. Powtarzaj krok 2 i 3 po wszystkich próbkach uczących
+5. Powtarzaj kroki 2 - 4 zadaną liczbę iteracji
+
+`Metoda MacQueena` - wariant metody `VQ`, gdzie stała uczenia jest odwrotnie proporcjonalna do liczby obserwacji $N_n$ w klastrze przypisaną uprzednio do `winning seed`.
+$$
+S_n = S_n\frac{N_n}{N_n + 1} + x_i \frac{1}{N_n + 1}
+$$
+
+### SOM
+1. Wybierz k punktów
+2. Dla obserwacji $X_i$ znajdź najbliższy centroid $S_j$ (`winning seed`)
+3. Zmodyfikuj wszystkie centroidy wg formuły
+$$
+S_n = S_n(1 - K(j, n)L) + x_iK(j, n)L
+$$
+$K(j,n)$ - funkcja malejąca z odległością centroidów $S_j$ i $S_i$ na mapie 2D, (0: daleko, 1: odległość zerowa)
+4. Powtarzaj krok 2 i 3 po wszystkich próbkach uczących
+
+SOM pozwala na stworzenie mapy klastrów (np. mapy demograficznej miasta).
+
+## Reguły asocjacyjne
+W analizie asocjacji wykorzystuje się następujące parametry:
+- `Support` (wsparcie) - częstość występowania reguły,
+- `Confidence` (pewność) - stosunek mocy podzbioru `XuY` do mocy zbioru `X` dla reguły `X->Y`
+- `Lift` - "pewność / jaki procent transakcje zawiera Y" - określa ile razy częściej kupowany jest produkty w regule niż normalnie, im wyższa tym znaleziona reguła jest bardziej wartościowsza
+
+Jak znaleźć reguły asocjacyjne?
+- przegląd zupełny, analizujemy wszystkie możliwe podzbiory - bardzo wolny i zasobożerny, liczba podzbiorów dramatycznie rośnie wraz z liczbą elementów
+- można zauważyć, że jeśli zbiór `X` jest częsty, to każdy podzbiór `X` też jest częsty
+  - szukamy obiektów często występujących w koszykach (powyżej pewnego supportu) (zbiór $L_1$)
+  - szukamy par obiektów występujących w $L_1$ jako kandydatów do reguły asocjacyjnej (powyżej pewnego supportu) (zbiór $L_2$)
+  - dalej tworzymy częste trójki, częste czwórki itp.
+- modyfikacja poprzedniego algorytmu polega na tym, że:
+  - w pierwszym kroku generujemy duże itemsety patrząc na minimalny support
+  - w drugim kroku bierzemy duże itemsety i wyciągamy z nich reguły z wystarczającą pewnością (bierzemy jeden element podzbioru i stawiamy go po lewej stronie implikaji, $x => l - x$ gdzie $l$ to duży podzbiór i $x \in l$)
